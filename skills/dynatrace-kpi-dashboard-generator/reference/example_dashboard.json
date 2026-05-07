@@ -1,0 +1,2126 @@
+{
+  "id": "49b1d0e9-f90f-440b-9254-2385d144c2e0",
+  "name": "Walmart | Operations Dashboard",
+  "type": "dashboard",
+  "isPrivate": true,
+  "content": {
+    "version": 21,
+    "variables": [
+      {
+        "version": 2,
+        "key": "Banner",
+        "type": "query",
+        "visible": true,
+        "editable": true,
+        "input": "fetch bizevents, from:now()-24h\n| filter event.provider == \"walmart.event.provider\"\n| filter isNotNull(banner)\n| fields banner\n| dedup banner",
+        "multiple": true
+      },
+      {
+        "version": 2,
+        "key": "Region",
+        "type": "query",
+        "visible": true,
+        "editable": true,
+        "input": "fetch bizevents, from:now()-24h\n| filter event.provider == \"walmart.event.provider\"\n| filter isNotNull(region)\n| fields region\n| dedup region",
+        "multiple": true
+      },
+      {
+        "version": 2,
+        "key": "Department",
+        "type": "query",
+        "visible": true,
+        "editable": true,
+        "input": "fetch bizevents, from:now()-24h\n| filter event.provider == \"walmart.event.provider\"\n| filter isNotNull(department)\n| fields department\n| dedup department",
+        "multiple": true
+      },
+      {
+        "version": 2,
+        "key": "Channel",
+        "type": "query",
+        "visible": true,
+        "editable": true,
+        "input": "fetch bizevents, from:now()-24h\n| filter event.provider == \"walmart.event.provider\"\n| filter isNotNull(channel)\n| fields channel\n| dedup channel",
+        "multiple": true
+      },
+      {
+        "version": 2,
+        "key": "Store",
+        "type": "query",
+        "visible": true,
+        "editable": true,
+        "input": "fetch bizevents, from:now()-24h\n| filter event.provider == \"walmart.event.provider\"\n| filter isNotNull(state)\n| fields state\n| dedup state",
+        "multiple": true
+      }
+    ],
+    "tiles": {
+      "0": {
+        "type": "markdown",
+        "content": "![Walmart](https://1000logos.net/wp-content/uploads/2017/05/Walmart-Logo.png)"
+      },
+      "1": {
+        "type": "markdown",
+        "content": "# Walmart | Operations Dashboard\n\nReal-time KPI monitoring across stores, e-commerce, supply chain, customer experience, and pharmacy."
+      },
+      "2": {
+        "title": "",
+        "type": "data",
+        "query": "data record(section=\"Executive Summary\")",
+        "visualization": "singleValue",
+        "visualizationSettings": {
+          "singleValue": {
+            "labelMode": "none",
+            "isIconVisible": true,
+            "prefixIcon": "AnalyticsIcon",
+            "colorThresholdTarget": "background"
+          },
+          "autoSelectVisualization": false,
+          "coloring": {
+            "colorRules": [
+              {
+                "value": "x",
+                "comparator": "!=",
+                "field": "section",
+                "colorMode": "custom-color",
+                "customColor": "#FFC220"
+              }
+            ]
+          }
+        },
+        "querySettings": {
+          "maxResultRecords": 1000,
+          "defaultScanLimitGbytes": 500,
+          "maxResultMegaBytes": 100,
+          "defaultSamplingRatio": 10,
+          "enableSampling": false
+        }
+      },
+      "3": {
+        "title": "\ud83d\udcb0 Total Store Revenue",
+        "type": "data",
+        "query": "fetch bizevents\n| filter event.provider == \"walmart.event.provider\"\n| filter event.type == \"pos.transaction\"\n| filter in(banner, $Banner)\n| filter in(region, $Region)\n| filter in(department, $Department)\n| filter in(state, $Store)\n| summarize revenue = sum(basket_value_usd)",
+        "visualization": "singleValue",
+        "visualizationSettings": {
+          "singleValue": {
+            "label": "REVENUE",
+            "recordField": "revenue",
+            "prefixIcon": "MoneyIcon",
+            "colorThresholdTarget": "background"
+          },
+          "unitsOverrides": [
+            {
+              "identifier": "revenue",
+              "unitCategory": "unspecified",
+              "baseUnit": "count",
+              "displayUnit": null,
+              "decimals": 0,
+              "suffix": " USD",
+              "delimiter": true
+            }
+          ],
+          "coloring": {
+            "thresholdRules": []
+          }
+        },
+        "querySettings": {
+          "maxResultRecords": 1000,
+          "defaultScanLimitGbytes": 500,
+          "maxResultMegaBytes": 100,
+          "defaultSamplingRatio": 10,
+          "enableSampling": false
+        }
+      },
+      "4": {
+        "title": "\ud83d\uded2 POS Transactions",
+        "type": "data",
+        "query": "fetch bizevents\n| filter event.provider == \"walmart.event.provider\"\n| filter event.type == \"pos.transaction\"\n| filter in(banner, $Banner)\n| filter in(region, $Region)\n| filter in(department, $Department)\n| filter in(state, $Store)\n| summarize transactions = count()",
+        "visualization": "singleValue",
+        "visualizationSettings": {
+          "singleValue": {
+            "label": "IN-STORE",
+            "recordField": "transactions",
+            "prefixIcon": "ShoppingCartIcon",
+            "colorThresholdTarget": "background"
+          },
+          "unitsOverrides": [
+            {
+              "identifier": "transactions",
+              "unitCategory": "unspecified",
+              "baseUnit": "count",
+              "displayUnit": null,
+              "decimals": 0,
+              "delimiter": true
+            }
+          ]
+        },
+        "querySettings": {
+          "maxResultRecords": 1000,
+          "defaultScanLimitGbytes": 500,
+          "maxResultMegaBytes": 100,
+          "defaultSamplingRatio": 10,
+          "enableSampling": false
+        }
+      },
+      "5": {
+        "title": "\ud83c\udf10 Online Orders",
+        "type": "data",
+        "query": "fetch bizevents\n| filter event.provider == \"walmart.event.provider\"\n| filter event.type == \"ecom.order.placed\"\n| filter in(region, $Region)\n| filter in(department, $Department)\n| filter in(channel, $Channel)\n| filter in(state, $Store)\n| summarize orders = count()",
+        "visualization": "singleValue",
+        "visualizationSettings": {
+          "singleValue": {
+            "label": "DIGITAL",
+            "recordField": "orders",
+            "prefixIcon": "GlobeIcon",
+            "colorThresholdTarget": "background"
+          },
+          "unitsOverrides": [
+            {
+              "identifier": "orders",
+              "unitCategory": "unspecified",
+              "baseUnit": "count",
+              "displayUnit": null,
+              "decimals": 0,
+              "delimiter": true
+            }
+          ]
+        },
+        "querySettings": {
+          "maxResultRecords": 1000,
+          "defaultScanLimitGbytes": 500,
+          "maxResultMegaBytes": 100,
+          "defaultSamplingRatio": 10,
+          "enableSampling": false
+        }
+      },
+      "6": {
+        "title": "\ud83d\udc65 Total Store Visitors",
+        "type": "data",
+        "query": "fetch bizevents\n| filter event.provider == \"walmart.event.provider\"\n| filter event.type == \"store.foot.traffic\"\n| filter in(banner, $Banner)\n| filter in(region, $Region)\n| filter in(state, $Store)\n| summarize visitors = sum(visitors_count)",
+        "visualization": "singleValue",
+        "visualizationSettings": {
+          "singleValue": {
+            "label": "FOOT TRAFFIC",
+            "recordField": "visitors",
+            "prefixIcon": "UserIcon",
+            "colorThresholdTarget": "background"
+          },
+          "unitsOverrides": [
+            {
+              "identifier": "visitors",
+              "unitCategory": "unspecified",
+              "baseUnit": "count",
+              "displayUnit": null,
+              "decimals": 0,
+              "delimiter": true
+            }
+          ]
+        },
+        "querySettings": {
+          "maxResultRecords": 1000,
+          "defaultScanLimitGbytes": 500,
+          "maxResultMegaBytes": 100,
+          "defaultSamplingRatio": 10,
+          "enableSampling": false
+        }
+      },
+      "7": {
+        "title": "\ud83d\udcb5 Revenue by Banner",
+        "type": "data",
+        "query": "fetch bizevents\n| filter event.provider == \"walmart.event.provider\"\n| filter event.type == \"pos.transaction\"\n| filter in(banner, $Banner)\n| filter in(region, $Region)\n| filter in(department, $Department)\n| filter in(state, $Store)\n| summarize revenue = sum(basket_value_usd), by:{banner}",
+        "visualization": "pieChart",
+        "visualizationSettings": {
+          "chartSettings": {
+            "categoryOverrides": {
+              "Walmart Supercenter": {
+                "color": "#0071CE"
+              },
+              "Walmart Neighborhood Market": {
+                "color": "#4DA6FF"
+              },
+              "Sam's Club": {
+                "color": "#FFC220"
+              }
+            },
+            "circleChartSettings": {
+              "valueType": "relative",
+              "showTotalValue": true,
+              "groupingThresholdType": "relative"
+            }
+          },
+          "legend": {
+            "ratio": 27
+          }
+        },
+        "querySettings": {
+          "maxResultRecords": 1000,
+          "defaultScanLimitGbytes": 500,
+          "maxResultMegaBytes": 100,
+          "defaultSamplingRatio": 10,
+          "enableSampling": false
+        }
+      },
+      "8": {
+        "title": "\ud83d\udcc8 Transactions Over Time",
+        "type": "data",
+        "query": "fetch bizevents\n| filter event.provider == \"walmart.event.provider\"\n| filter event.type == \"pos.transaction\" or event.type == \"ecom.order.placed\"\n| filter in(region, $Region)\n| filter in(department, $Department)\n| filter in(state, $Store)\n| makeTimeseries instore = countIf(event.type == \"pos.transaction\"), online = countIf(event.type == \"ecom.order.placed\"), bins:30",
+        "visualization": "areaChart",
+        "visualizationSettings": {
+          "chartSettings": {
+            "seriesOverrides": [
+              {
+                "seriesId": [
+                  "instore"
+                ],
+                "override": {
+                  "color": "#0071CE"
+                }
+              },
+              {
+                "seriesId": [
+                  "online"
+                ],
+                "override": {
+                  "color": "#FFC220"
+                }
+              }
+            ],
+            "fieldMapping": {
+              "leftAxisValues": [
+                "instore",
+                "online"
+              ],
+              "timestamp": "timeframe"
+            },
+            "gapPolicy": "connect"
+          }
+        },
+        "querySettings": {
+          "maxResultRecords": 1000,
+          "defaultScanLimitGbytes": 500,
+          "maxResultMegaBytes": 100,
+          "defaultSamplingRatio": 10,
+          "enableSampling": false
+        }
+      },
+      "9": {
+        "title": "\ud83d\uddfa\ufe0f Walmart Store & DC Footprint",
+        "type": "data",
+        "query": "fetch bizevents\n| filter event.provider == \"walmart.event.provider\"\n| filter event.type == \"pos.transaction\"\n| filter in(banner, $Banner)\n| filter in(region, $Region)\n| filter in(department, $Department)\n| filter in(state, $Store)\n| summarize transactions = count(), revenue = sum(basket_value_usd), by:{city, state, `geo.location.latitude`, `geo.location.longitude`}\n| fields `geo.location.latitude`, `geo.location.longitude`, city, state, transactions, revenue",
+        "visualization": "bubbleMap",
+        "visualizationSettings": {
+          "mapRadius": {
+            "radiusRange": [
+              4,
+              28
+            ]
+          },
+          "tooltip": {
+            "showCustomFields": true
+          },
+          "regions": {
+            "showRegions": true,
+            "regions": [
+              "US"
+            ]
+          },
+          "autoSelectVisualization": false,
+          "coloring": {
+            "thresholdRules": [
+              {
+                "color": "#FFC220",
+                "min": null,
+                "max": 200,
+                "label": "Lower volume",
+                "colorMode": "single-color",
+                "mode": "range",
+                "position": "left",
+                "strokeOnly": false
+              },
+              {
+                "color": "#4DA6FF",
+                "min": 200,
+                "max": 500,
+                "label": "Mid volume",
+                "colorMode": "single-color",
+                "mode": "range",
+                "position": "left",
+                "strokeOnly": false
+              },
+              {
+                "color": "#0071CE",
+                "min": 500,
+                "max": null,
+                "label": "High volume",
+                "colorMode": "single-color",
+                "mode": "range",
+                "position": "left",
+                "strokeOnly": false
+              }
+            ]
+          },
+          "dataMapping": {
+            "radius": "transactions",
+            "dimension": "city"
+          },
+          "legend": {
+            "showLegend": true,
+            "position": "auto",
+            "ratio": 13
+          }
+        },
+        "querySettings": {
+          "maxResultRecords": 1000,
+          "defaultScanLimitGbytes": 500,
+          "maxResultMegaBytes": 100,
+          "defaultSamplingRatio": 10,
+          "enableSampling": false
+        }
+      },
+      "10": {
+        "title": "",
+        "type": "data",
+        "query": "data record(section=\"Store Operations\")",
+        "visualization": "singleValue",
+        "visualizationSettings": {
+          "singleValue": {
+            "labelMode": "none",
+            "isIconVisible": true,
+            "prefixIcon": "ShoppingCartIcon",
+            "colorThresholdTarget": "background"
+          },
+          "autoSelectVisualization": false,
+          "coloring": {
+            "colorRules": [
+              {
+                "value": "x",
+                "comparator": "!=",
+                "field": "section",
+                "colorMode": "custom-color",
+                "customColor": "#0071CE"
+              }
+            ]
+          }
+        },
+        "querySettings": {
+          "maxResultRecords": 1000,
+          "defaultScanLimitGbytes": 500,
+          "maxResultMegaBytes": 100,
+          "defaultSamplingRatio": 10,
+          "enableSampling": false
+        }
+      },
+      "11": {
+        "title": "\ud83e\uddfe Avg Basket Value",
+        "type": "data",
+        "query": "fetch bizevents\n| filter event.provider == \"walmart.event.provider\"\n| filter event.type == \"pos.transaction\"\n| filter in(banner, $Banner)\n| filter in(region, $Region)\n| filter in(department, $Department)\n| filter in(state, $Store)\n| summarize avgBasket = avg(basket_value_usd)",
+        "visualization": "singleValue",
+        "visualizationSettings": {
+          "singleValue": {
+            "label": "BASKET",
+            "recordField": "avgBasket",
+            "colorThresholdTarget": "background"
+          },
+          "unitsOverrides": [
+            {
+              "identifier": "avgBasket",
+              "unitCategory": "unspecified",
+              "baseUnit": "count",
+              "displayUnit": null,
+              "decimals": 2,
+              "suffix": " USD",
+              "delimiter": true
+            }
+          ]
+        },
+        "querySettings": {
+          "maxResultRecords": 1000,
+          "defaultScanLimitGbytes": 500,
+          "maxResultMegaBytes": 100,
+          "defaultSamplingRatio": 10,
+          "enableSampling": false
+        }
+      },
+      "12": {
+        "title": "\ud83d\udeb6 Avg Visitors per Store",
+        "type": "data",
+        "query": "fetch bizevents\n| filter event.provider == \"walmart.event.provider\"\n| filter event.type == \"store.foot.traffic\"\n| filter in(banner, $Banner)\n| filter in(region, $Region)\n| filter in(state, $Store)\n| summarize avgVisitors = avg(visitors_count)",
+        "visualization": "singleValue",
+        "visualizationSettings": {
+          "singleValue": {
+            "label": "AVG VISITORS",
+            "recordField": "avgVisitors",
+            "colorThresholdTarget": "background"
+          },
+          "unitsOverrides": [
+            {
+              "identifier": "avgVisitors",
+              "unitCategory": "unspecified",
+              "baseUnit": "count",
+              "displayUnit": null,
+              "decimals": 0,
+              "delimiter": true
+            }
+          ]
+        },
+        "querySettings": {
+          "maxResultRecords": 1000,
+          "defaultScanLimitGbytes": 500,
+          "maxResultMegaBytes": 100,
+          "defaultSamplingRatio": 10,
+          "enableSampling": false
+        }
+      },
+      "13": {
+        "title": "\ud83c\udfaf Avg Conversion Rate",
+        "type": "data",
+        "query": "fetch bizevents\n| filter event.provider == \"walmart.event.provider\"\n| filter event.type == \"store.foot.traffic\"\n| filter in(banner, $Banner)\n| filter in(region, $Region)\n| filter in(state, $Store)\n| summarize visitors = sum(visitors_count), transactions = sum(transactions_count)\n| fieldsAdd conversion = (toDouble(transactions) / toDouble(visitors)) * 100",
+        "visualization": "singleValue",
+        "visualizationSettings": {
+          "singleValue": {
+            "label": "CONVERSION",
+            "recordField": "conversion",
+            "colorThresholdTarget": "background"
+          },
+          "unitsOverrides": [
+            {
+              "identifier": "conversion",
+              "unitCategory": "percentage",
+              "baseUnit": "percent",
+              "displayUnit": null,
+              "decimals": 1,
+              "suffix": "%",
+              "delimiter": true
+            }
+          ],
+          "coloring": {
+            "colorRules": [
+              {
+                "value": 25,
+                "comparator": "\u2265",
+                "field": "conversion",
+                "colorMode": "custom-color",
+                "customColor": {
+                  "Default": "var(--dt-colors-charts-status-success-default, #2ab06f)"
+                }
+              },
+              {
+                "value": 20,
+                "comparator": "\u2265",
+                "field": "conversion",
+                "colorMode": "custom-color",
+                "customColor": {
+                  "Default": "var(--dt-colors-charts-status-warning-default, #f5d30f)"
+                }
+              },
+              {
+                "value": 20,
+                "comparator": "<",
+                "field": "conversion",
+                "colorMode": "custom-color",
+                "customColor": {
+                  "Default": "var(--dt-colors-charts-status-critical-default, #c62239)"
+                }
+              }
+            ]
+          }
+        },
+        "querySettings": {
+          "maxResultRecords": 1000,
+          "defaultScanLimitGbytes": 500,
+          "maxResultMegaBytes": 100,
+          "defaultSamplingRatio": 10,
+          "enableSampling": false
+        }
+      },
+      "14": {
+        "title": "\ud83d\udeab Stockout Events",
+        "type": "data",
+        "query": "fetch bizevents\n| filter event.provider == \"walmart.event.provider\"\n| filter event.type == \"inventory.stockout\"\n| filter in(region, $Region)\n| filter in(department, $Department)\n| filter in(state, $Store)\n| summarize stockouts = count()",
+        "visualization": "singleValue",
+        "visualizationSettings": {
+          "singleValue": {
+            "label": "STOCKOUTS",
+            "recordField": "stockouts",
+            "prefixIcon": "AlertIcon",
+            "colorThresholdTarget": "background"
+          },
+          "unitsOverrides": [
+            {
+              "identifier": "stockouts",
+              "unitCategory": "unspecified",
+              "baseUnit": "count",
+              "displayUnit": null,
+              "decimals": 0,
+              "delimiter": true
+            }
+          ],
+          "coloring": {
+            "colorRules": [
+              {
+                "value": 50,
+                "comparator": ">",
+                "field": "stockouts",
+                "colorMode": "custom-color",
+                "customColor": {
+                  "Default": "var(--dt-colors-charts-status-critical-default, #c62239)"
+                }
+              },
+              {
+                "value": 30,
+                "comparator": ">",
+                "field": "stockouts",
+                "colorMode": "custom-color",
+                "customColor": {
+                  "Default": "var(--dt-colors-charts-status-warning-default, #f5d30f)"
+                }
+              },
+              {
+                "value": 30,
+                "comparator": "\u2264",
+                "field": "stockouts",
+                "colorMode": "custom-color",
+                "customColor": {
+                  "Default": "var(--dt-colors-charts-status-success-default, #2ab06f)"
+                }
+              }
+            ]
+          }
+        },
+        "querySettings": {
+          "maxResultRecords": 1000,
+          "defaultScanLimitGbytes": 500,
+          "maxResultMegaBytes": 100,
+          "defaultSamplingRatio": 10,
+          "enableSampling": false
+        }
+      },
+      "15": {
+        "title": "\ud83c\udf0e Transactions by Region",
+        "type": "data",
+        "query": "fetch bizevents\n| filter event.provider == \"walmart.event.provider\"\n| filter event.type == \"pos.transaction\"\n| filter in(banner, $Banner)\n| filter in(region, $Region)\n| filter in(department, $Department)\n| filter in(state, $Store)\n| makeTimeseries transactions = count(), by:{region}, bins:20",
+        "visualization": "barChart",
+        "visualizationSettings": {
+          "chartSettings": {
+            "xAxisLabelVisible": true,
+            "legend": {
+              "hidden": true
+            },
+            "fieldMapping": {
+              "timestamp": "timeframe",
+              "leftAxisValues": [
+                "transactions"
+              ],
+              "leftAxisDimensions": [
+                "region"
+              ]
+            },
+            "truncationMode": "auto"
+          },
+          "legend": {
+            "ratio": 27
+          }
+        },
+        "querySettings": {
+          "maxResultRecords": 1000,
+          "defaultScanLimitGbytes": 500,
+          "maxResultMegaBytes": 100,
+          "defaultSamplingRatio": 10,
+          "enableSampling": false
+        }
+      },
+      "16": {
+        "title": "\ud83d\udcca Foot Traffic Over Time",
+        "type": "data",
+        "query": "fetch bizevents\n| filter event.provider == \"walmart.event.provider\"\n| filter event.type == \"store.foot.traffic\"\n| filter in(banner, $Banner)\n| filter in(region, $Region)\n| filter in(state, $Store)\n| makeTimeseries visitors = sum(visitors_count), transactions = sum(transactions_count), bins:30",
+        "visualization": "lineChart",
+        "visualizationSettings": {
+          "chartSettings": {
+            "seriesOverrides": [
+              {
+                "seriesId": [
+                  "visitors"
+                ],
+                "override": {
+                  "color": "#0071CE"
+                }
+              },
+              {
+                "seriesId": [
+                  "transactions"
+                ],
+                "override": {
+                  "color": "#FFC220"
+                }
+              }
+            ],
+            "fieldMapping": {
+              "leftAxisValues": [
+                "visitors",
+                "transactions"
+              ],
+              "timestamp": "timeframe"
+            },
+            "gapPolicy": "connect"
+          }
+        },
+        "querySettings": {
+          "maxResultRecords": 1000,
+          "defaultScanLimitGbytes": 500,
+          "maxResultMegaBytes": 100,
+          "defaultSamplingRatio": 10,
+          "enableSampling": false
+        }
+      },
+      "17": {
+        "title": "",
+        "type": "data",
+        "query": "data record(section=\"E-commerce & Digital\")",
+        "visualization": "singleValue",
+        "visualizationSettings": {
+          "singleValue": {
+            "labelMode": "none",
+            "isIconVisible": true,
+            "prefixIcon": "GlobeIcon",
+            "colorThresholdTarget": "background"
+          },
+          "autoSelectVisualization": false,
+          "coloring": {
+            "colorRules": [
+              {
+                "value": "x",
+                "comparator": "!=",
+                "field": "section",
+                "colorMode": "custom-color",
+                "customColor": "#4DA6FF"
+              }
+            ]
+          }
+        },
+        "querySettings": {
+          "maxResultRecords": 1000,
+          "defaultScanLimitGbytes": 500,
+          "maxResultMegaBytes": 100,
+          "defaultSamplingRatio": 10,
+          "enableSampling": false
+        }
+      },
+      "18": {
+        "title": "\ud83d\udcbb Online Revenue",
+        "type": "data",
+        "query": "fetch bizevents\n| filter event.provider == \"walmart.event.provider\"\n| filter event.type == \"ecom.order.placed\"\n| filter in(region, $Region)\n| filter in(department, $Department)\n| filter in(channel, $Channel)\n| filter in(state, $Store)\n| summarize revenue = sum(order_value_usd)",
+        "visualization": "singleValue",
+        "visualizationSettings": {
+          "singleValue": {
+            "label": "GMV",
+            "recordField": "revenue",
+            "prefixIcon": "MoneyIcon",
+            "colorThresholdTarget": "background"
+          },
+          "unitsOverrides": [
+            {
+              "identifier": "revenue",
+              "unitCategory": "unspecified",
+              "baseUnit": "count",
+              "displayUnit": null,
+              "decimals": 0,
+              "suffix": " USD",
+              "delimiter": true
+            }
+          ]
+        },
+        "querySettings": {
+          "maxResultRecords": 1000,
+          "defaultScanLimitGbytes": 500,
+          "maxResultMegaBytes": 100,
+          "defaultSamplingRatio": 10,
+          "enableSampling": false
+        }
+      },
+      "19": {
+        "title": "\ud83d\uded2 Cart Abandonment Rate",
+        "type": "data",
+        "query": "fetch bizevents\n| filter event.provider == \"walmart.event.provider\"\n| filter event.type == \"ecom.cart.abandoned\" or event.type == \"ecom.checkout.completed\"\n| filter in(channel, $Channel)\n| summarize abandoned = countIf(event.type == \"ecom.cart.abandoned\"), completed = countIf(event.type == \"ecom.checkout.completed\")\n| fieldsAdd abandonRate = (toDouble(abandoned) / (toDouble(abandoned) + toDouble(completed))) * 100",
+        "visualization": "singleValue",
+        "visualizationSettings": {
+          "singleValue": {
+            "label": "ABANDON %",
+            "recordField": "abandonRate",
+            "colorThresholdTarget": "background"
+          },
+          "unitsOverrides": [
+            {
+              "identifier": "abandonRate",
+              "unitCategory": "percentage",
+              "baseUnit": "percent",
+              "displayUnit": null,
+              "decimals": 1,
+              "suffix": "%",
+              "delimiter": true
+            }
+          ],
+          "coloring": {
+            "colorRules": [
+              {
+                "value": 40,
+                "comparator": ">",
+                "field": "abandonRate",
+                "colorMode": "custom-color",
+                "customColor": {
+                  "Default": "var(--dt-colors-charts-status-critical-default, #c62239)"
+                }
+              },
+              {
+                "value": 30,
+                "comparator": ">",
+                "field": "abandonRate",
+                "colorMode": "custom-color",
+                "customColor": {
+                  "Default": "var(--dt-colors-charts-status-warning-default, #f5d30f)"
+                }
+              },
+              {
+                "value": 30,
+                "comparator": "\u2264",
+                "field": "abandonRate",
+                "colorMode": "custom-color",
+                "customColor": {
+                  "Default": "var(--dt-colors-charts-status-success-default, #2ab06f)"
+                }
+              }
+            ]
+          }
+        },
+        "querySettings": {
+          "maxResultRecords": 1000,
+          "defaultScanLimitGbytes": 500,
+          "maxResultMegaBytes": 100,
+          "defaultSamplingRatio": 10,
+          "enableSampling": false
+        }
+      },
+      "20": {
+        "title": "\ud83d\udcb3 Avg Online Order Value",
+        "type": "data",
+        "query": "fetch bizevents\n| filter event.provider == \"walmart.event.provider\"\n| filter event.type == \"ecom.order.placed\"\n| filter in(region, $Region)\n| filter in(department, $Department)\n| filter in(channel, $Channel)\n| filter in(state, $Store)\n| summarize avgOrder = avg(order_value_usd)",
+        "visualization": "singleValue",
+        "visualizationSettings": {
+          "singleValue": {
+            "label": "AOV",
+            "recordField": "avgOrder",
+            "colorThresholdTarget": "background"
+          },
+          "unitsOverrides": [
+            {
+              "identifier": "avgOrder",
+              "unitCategory": "unspecified",
+              "baseUnit": "count",
+              "displayUnit": null,
+              "decimals": 2,
+              "suffix": " USD",
+              "delimiter": true
+            }
+          ]
+        },
+        "querySettings": {
+          "maxResultRecords": 1000,
+          "defaultScanLimitGbytes": 500,
+          "maxResultMegaBytes": 100,
+          "defaultSamplingRatio": 10,
+          "enableSampling": false
+        }
+      },
+      "21": {
+        "title": "\ud83d\udcf1 Mobile Checkout %",
+        "type": "data",
+        "query": "fetch bizevents\n| filter event.provider == \"walmart.event.provider\"\n| filter event.type == \"ecom.checkout.completed\"\n| filter in(channel, $Channel)\n| summarize mobile = countIf(device_type == \"mobile\"), total = count()\n| fieldsAdd mobilePct = (toDouble(mobile) / toDouble(total)) * 100",
+        "visualization": "singleValue",
+        "visualizationSettings": {
+          "singleValue": {
+            "label": "MOBILE",
+            "recordField": "mobilePct",
+            "prefixIcon": "MobileIcon",
+            "colorThresholdTarget": "background"
+          },
+          "unitsOverrides": [
+            {
+              "identifier": "mobilePct",
+              "unitCategory": "percentage",
+              "baseUnit": "percent",
+              "displayUnit": null,
+              "decimals": 1,
+              "suffix": "%",
+              "delimiter": true
+            }
+          ],
+          "coloring": {
+            "colorRules": [
+              {
+                "value": 50,
+                "comparator": "\u2265",
+                "field": "mobilePct",
+                "colorMode": "custom-color",
+                "customColor": {
+                  "Default": "var(--dt-colors-charts-status-success-default, #2ab06f)"
+                }
+              },
+              {
+                "value": 35,
+                "comparator": "\u2265",
+                "field": "mobilePct",
+                "colorMode": "custom-color",
+                "customColor": {
+                  "Default": "var(--dt-colors-charts-status-warning-default, #f5d30f)"
+                }
+              },
+              {
+                "value": 0,
+                "comparator": "\u2265",
+                "field": "mobilePct",
+                "colorMode": "custom-color",
+                "customColor": {
+                  "Default": "var(--dt-colors-charts-status-critical-default, #c62239)"
+                }
+              }
+            ]
+          }
+        },
+        "querySettings": {
+          "maxResultRecords": 1000,
+          "defaultScanLimitGbytes": 500,
+          "maxResultMegaBytes": 100,
+          "defaultSamplingRatio": 10,
+          "enableSampling": false
+        }
+      },
+      "22": {
+        "title": "\ud83d\udcf2 Orders by Channel",
+        "type": "data",
+        "query": "fetch bizevents\n| filter event.provider == \"walmart.event.provider\"\n| filter event.type == \"ecom.order.placed\"\n| filter in(region, $Region)\n| filter in(department, $Department)\n| filter in(channel, $Channel)\n| filter in(state, $Store)\n| summarize orders = count(), by:{channel}",
+        "visualization": "pieChart",
+        "visualizationSettings": {
+          "chartSettings": {
+            "categoryOverrides": {
+              "walmart_app": {
+                "color": "#0071CE"
+              },
+              "walmart.com_web": {
+                "color": "#FFC220"
+              },
+              "marketplace_seller": {
+                "color": "#4DA6FF"
+              },
+              "third_party": {
+                "color": "#9B9B9B"
+              }
+            },
+            "circleChartSettings": {
+              "valueType": "relative",
+              "showTotalValue": true,
+              "groupingThresholdType": "relative"
+            }
+          },
+          "legend": {
+            "ratio": 27
+          }
+        },
+        "querySettings": {
+          "maxResultRecords": 1000,
+          "defaultScanLimitGbytes": 500,
+          "maxResultMegaBytes": 100,
+          "defaultSamplingRatio": 10,
+          "enableSampling": false
+        }
+      },
+      "23": {
+        "title": "\ud83d\udcc8 Online Activity Over Time",
+        "type": "data",
+        "query": "fetch bizevents\n| filter event.provider == \"walmart.event.provider\"\n| filter event.type == \"ecom.order.placed\" or event.type == \"ecom.cart.abandoned\" or event.type == \"ecom.checkout.completed\"\n| filter in(channel, $Channel)\n| makeTimeseries placed = countIf(event.type == \"ecom.order.placed\"), abandoned = countIf(event.type == \"ecom.cart.abandoned\"), completed = countIf(event.type == \"ecom.checkout.completed\"), bins:30",
+        "visualization": "barChart",
+        "visualizationSettings": {
+          "chartSettings": {
+            "seriesOverrides": [
+              {
+                "seriesId": [
+                  "placed"
+                ],
+                "override": {
+                  "color": "#0071CE"
+                }
+              },
+              {
+                "seriesId": [
+                  "completed"
+                ],
+                "override": {
+                  "color": "#2EB04C"
+                }
+              },
+              {
+                "seriesId": [
+                  "abandoned"
+                ],
+                "override": {
+                  "color": "#F47C20"
+                }
+              }
+            ],
+            "fieldMapping": {
+              "leftAxisValues": [
+                "placed",
+                "completed",
+                "abandoned"
+              ],
+              "timestamp": "timeframe"
+            },
+            "gapPolicy": "connect",
+            "truncationMode": "auto"
+          }
+        },
+        "querySettings": {
+          "maxResultRecords": 1000,
+          "defaultScanLimitGbytes": 500,
+          "maxResultMegaBytes": 100,
+          "defaultSamplingRatio": 10,
+          "enableSampling": false
+        }
+      },
+      "24": {
+        "title": "",
+        "type": "data",
+        "query": "data record(section=\"Supply Chain & Fulfillment\")",
+        "visualization": "singleValue",
+        "visualizationSettings": {
+          "singleValue": {
+            "labelMode": "none",
+            "isIconVisible": true,
+            "prefixIcon": "TruckIcon",
+            "colorThresholdTarget": "background"
+          },
+          "autoSelectVisualization": false,
+          "coloring": {
+            "colorRules": [
+              {
+                "value": "x",
+                "comparator": "!=",
+                "field": "section",
+                "colorMode": "custom-color",
+                "customColor": "#00549B"
+              }
+            ]
+          }
+        },
+        "querySettings": {
+          "maxResultRecords": 1000,
+          "defaultScanLimitGbytes": 500,
+          "maxResultMegaBytes": 100,
+          "defaultSamplingRatio": 10,
+          "enableSampling": false
+        }
+      },
+      "25": {
+        "title": "\ud83d\udce6 Shipments Sent",
+        "type": "data",
+        "query": "fetch bizevents\n| filter event.provider == \"walmart.event.provider\"\n| filter event.type == \"fulfillment.shipped\"\n| filter in(region, $Region)\n| summarize shipped = count()",
+        "visualization": "singleValue",
+        "visualizationSettings": {
+          "singleValue": {
+            "label": "SHIPMENTS",
+            "recordField": "shipped",
+            "prefixIcon": "TruckIcon",
+            "colorThresholdTarget": "background"
+          },
+          "unitsOverrides": [
+            {
+              "identifier": "shipped",
+              "unitCategory": "unspecified",
+              "baseUnit": "count",
+              "displayUnit": null,
+              "decimals": 0,
+              "delimiter": true
+            }
+          ]
+        },
+        "querySettings": {
+          "maxResultRecords": 1000,
+          "defaultScanLimitGbytes": 500,
+          "maxResultMegaBytes": 100,
+          "defaultSamplingRatio": 10,
+          "enableSampling": false
+        }
+      },
+      "26": {
+        "title": "\u2705 On-Time Delivery %",
+        "type": "data",
+        "query": "fetch bizevents\n| filter event.provider == \"walmart.event.provider\"\n| filter event.type == \"fulfillment.delivery\"\n| filter in(region, $Region)\n| summarize onTime = countIf(delivery_status == \"on_time\"), total = count()\n| fieldsAdd onTimePct = (toDouble(onTime) / toDouble(total)) * 100",
+        "visualization": "singleValue",
+        "visualizationSettings": {
+          "singleValue": {
+            "label": "ON-TIME",
+            "recordField": "onTimePct",
+            "colorThresholdTarget": "background"
+          },
+          "unitsOverrides": [
+            {
+              "identifier": "onTimePct",
+              "unitCategory": "percentage",
+              "baseUnit": "percent",
+              "displayUnit": null,
+              "decimals": 1,
+              "suffix": "%",
+              "delimiter": true
+            }
+          ],
+          "coloring": {
+            "colorRules": [
+              {
+                "value": 95,
+                "comparator": "\u2265",
+                "field": "onTimePct",
+                "colorMode": "custom-color",
+                "customColor": {
+                  "Default": "var(--dt-colors-charts-status-success-default, #2ab06f)"
+                }
+              },
+              {
+                "value": 90,
+                "comparator": "\u2265",
+                "field": "onTimePct",
+                "colorMode": "custom-color",
+                "customColor": {
+                  "Default": "var(--dt-colors-charts-status-warning-default, #f5d30f)"
+                }
+              },
+              {
+                "value": 0,
+                "comparator": "\u2265",
+                "field": "onTimePct",
+                "colorMode": "custom-color",
+                "customColor": {
+                  "Default": "var(--dt-colors-charts-status-critical-default, #c62239)"
+                }
+              }
+            ]
+          }
+        },
+        "querySettings": {
+          "maxResultRecords": 1000,
+          "defaultScanLimitGbytes": 500,
+          "maxResultMegaBytes": 100,
+          "defaultSamplingRatio": 10,
+          "enableSampling": false
+        }
+      },
+      "27": {
+        "title": "\ud83d\udecd\ufe0f Pickup Orders Ready",
+        "type": "data",
+        "query": "fetch bizevents\n| filter event.provider == \"walmart.event.provider\"\n| filter event.type == \"pickup.order.ready\"\n| filter in(region, $Region)\n| filter in(state, $Store)\n| summarize ready = count()",
+        "visualization": "singleValue",
+        "visualizationSettings": {
+          "singleValue": {
+            "label": "PICKUP",
+            "recordField": "ready",
+            "colorThresholdTarget": "background"
+          },
+          "unitsOverrides": [
+            {
+              "identifier": "ready",
+              "unitCategory": "unspecified",
+              "baseUnit": "count",
+              "displayUnit": null,
+              "decimals": 0,
+              "delimiter": true
+            }
+          ]
+        },
+        "querySettings": {
+          "maxResultRecords": 1000,
+          "defaultScanLimitGbytes": 500,
+          "maxResultMegaBytes": 100,
+          "defaultSamplingRatio": 10,
+          "enableSampling": false
+        }
+      },
+      "28": {
+        "title": "\ud83d\ude9a DC Outbound Pallets",
+        "type": "data",
+        "query": "fetch bizevents\n| filter event.provider == \"walmart.event.provider\"\n| filter event.type == \"dc.shipment.outbound\"\n| summarize pallets = sum(pallets_count)",
+        "visualization": "singleValue",
+        "visualizationSettings": {
+          "singleValue": {
+            "label": "PALLETS",
+            "recordField": "pallets",
+            "colorThresholdTarget": "background"
+          },
+          "unitsOverrides": [
+            {
+              "identifier": "pallets",
+              "unitCategory": "unspecified",
+              "baseUnit": "count",
+              "displayUnit": null,
+              "decimals": 0,
+              "delimiter": true
+            }
+          ]
+        },
+        "querySettings": {
+          "maxResultRecords": 1000,
+          "defaultScanLimitGbytes": 500,
+          "maxResultMegaBytes": 100,
+          "defaultSamplingRatio": 10,
+          "enableSampling": false
+        }
+      },
+      "29": {
+        "title": "\ud83d\udccb Fulfillment Method Mix",
+        "type": "data",
+        "query": "fetch bizevents\n| filter event.provider == \"walmart.event.provider\"\n| filter event.type == \"ecom.order.placed\"\n| filter in(region, $Region)\n| filter in(department, $Department)\n| filter in(channel, $Channel)\n| filter in(state, $Store)\n| makeTimeseries orders = count(), by:{fulfillment_method}, bins:20",
+        "visualization": "categoricalBar",
+        "visualizationSettings": {
+          "chartSettings": {
+            "categoryOverrides": {
+              "ship_to_home": {
+                "color": "#0071CE"
+              },
+              "store_pickup": {
+                "color": "#FFC220"
+              },
+              "curbside_pickup": {
+                "color": "#4DA6FF"
+              },
+              "express_delivery": {
+                "color": "#F47C20"
+              },
+              "ship_to_store": {
+                "color": "#9B9B9B"
+              }
+            },
+            "fieldMapping": {
+              "timestamp": "timeframe",
+              "leftAxisValues": [
+                "orders"
+              ],
+              "leftAxisDimensions": [
+                "fulfillment_method"
+              ]
+            }
+          },
+          "legend": {
+            "ratio": 27
+          }
+        },
+        "querySettings": {
+          "maxResultRecords": 1000,
+          "defaultScanLimitGbytes": 500,
+          "maxResultMegaBytes": 100,
+          "defaultSamplingRatio": 10,
+          "enableSampling": false
+        }
+      },
+      "30": {
+        "title": "\ud83d\udcc8 Deliveries Over Time",
+        "type": "data",
+        "query": "fetch bizevents\n| filter event.provider == \"walmart.event.provider\"\n| filter event.type == \"fulfillment.delivery\"\n| filter in(region, $Region)\n| makeTimeseries onTime = countIf(delivery_status == \"on_time\"), delayed = countIf(delivery_status == \"delayed\"), bins:30",
+        "visualization": "lineChart",
+        "visualizationSettings": {
+          "chartSettings": {
+            "seriesOverrides": [
+              {
+                "seriesId": [
+                  "onTime"
+                ],
+                "override": {
+                  "color": "#2EB04C"
+                }
+              },
+              {
+                "seriesId": [
+                  "delayed"
+                ],
+                "override": {
+                  "color": "#FF1744"
+                }
+              }
+            ],
+            "fieldMapping": {
+              "leftAxisValues": [
+                "onTime",
+                "delayed"
+              ],
+              "timestamp": "timeframe"
+            },
+            "gapPolicy": "connect"
+          }
+        },
+        "querySettings": {
+          "maxResultRecords": 1000,
+          "defaultScanLimitGbytes": 500,
+          "maxResultMegaBytes": 100,
+          "defaultSamplingRatio": 10,
+          "enableSampling": false
+        }
+      },
+      "31": {
+        "title": "",
+        "type": "data",
+        "query": "data record(section=\"Customer Experience\")",
+        "visualization": "singleValue",
+        "visualizationSettings": {
+          "singleValue": {
+            "labelMode": "none",
+            "isIconVisible": true,
+            "prefixIcon": "HeartIcon",
+            "colorThresholdTarget": "background"
+          },
+          "autoSelectVisualization": false,
+          "coloring": {
+            "colorRules": [
+              {
+                "value": "x",
+                "comparator": "!=",
+                "field": "section",
+                "colorMode": "custom-color",
+                "customColor": "#F47C20"
+              }
+            ]
+          }
+        },
+        "querySettings": {
+          "maxResultRecords": 1000,
+          "defaultScanLimitGbytes": 500,
+          "maxResultMegaBytes": 100,
+          "defaultSamplingRatio": 10,
+          "enableSampling": false
+        }
+      },
+      "32": {
+        "title": "\u2b50 Avg CSAT Score",
+        "type": "data",
+        "query": "fetch bizevents\n| filter event.provider == \"walmart.event.provider\"\n| filter event.type == \"customer.review\"\n| filter in(banner, $Banner)\n| filter in(department, $Department)\n| filter in(channel, $Channel)\n| summarize csat = avg(csat_score)",
+        "visualization": "singleValue",
+        "visualizationSettings": {
+          "singleValue": {
+            "label": "CSAT",
+            "recordField": "csat",
+            "colorThresholdTarget": "background"
+          },
+          "unitsOverrides": [
+            {
+              "identifier": "csat",
+              "unitCategory": "unspecified",
+              "baseUnit": "count",
+              "displayUnit": null,
+              "decimals": 1,
+              "delimiter": true
+            }
+          ],
+          "coloring": {
+            "colorRules": [
+              {
+                "value": 4.2,
+                "comparator": "\u2265",
+                "field": "avgCsat",
+                "colorMode": "custom-color",
+                "customColor": {
+                  "Default": "var(--dt-colors-charts-status-success-default, #2ab06f)"
+                }
+              },
+              {
+                "value": 3.8,
+                "comparator": "\u2265",
+                "field": "avgCsat",
+                "colorMode": "custom-color",
+                "customColor": {
+                  "Default": "var(--dt-colors-charts-status-warning-default, #f5d30f)"
+                }
+              },
+              {
+                "value": 0,
+                "comparator": "\u2265",
+                "field": "avgCsat",
+                "colorMode": "custom-color",
+                "customColor": {
+                  "Default": "var(--dt-colors-charts-status-critical-default, #c62239)"
+                }
+              }
+            ]
+          }
+        },
+        "querySettings": {
+          "maxResultRecords": 1000,
+          "defaultScanLimitGbytes": 500,
+          "maxResultMegaBytes": 100,
+          "defaultSamplingRatio": 10,
+          "enableSampling": false
+        }
+      },
+      "33": {
+        "title": "\ud83d\udcde Complaints",
+        "type": "data",
+        "query": "fetch bizevents\n| filter event.provider == \"walmart.event.provider\"\n| filter event.type == \"customer.complaint\"\n| filter in(banner, $Banner)\n| summarize complaints = count()",
+        "visualization": "singleValue",
+        "visualizationSettings": {
+          "singleValue": {
+            "label": "COMPLAINTS",
+            "recordField": "complaints",
+            "prefixIcon": "AlertIcon",
+            "colorThresholdTarget": "background"
+          },
+          "unitsOverrides": [
+            {
+              "identifier": "complaints",
+              "unitCategory": "unspecified",
+              "baseUnit": "count",
+              "displayUnit": null,
+              "decimals": 0,
+              "delimiter": true
+            }
+          ]
+        },
+        "querySettings": {
+          "maxResultRecords": 1000,
+          "defaultScanLimitGbytes": 500,
+          "maxResultMegaBytes": 100,
+          "defaultSamplingRatio": 10,
+          "enableSampling": false
+        }
+      },
+      "34": {
+        "title": "\u21a9\ufe0f Returns Processed",
+        "type": "data",
+        "query": "fetch bizevents\n| filter event.provider == \"walmart.event.provider\"\n| filter event.type == \"return.processed\"\n| filter in(banner, $Banner)\n| filter in(department, $Department)\n| summarize returns = count(), value = sum(return_value_usd)",
+        "visualization": "singleValue",
+        "visualizationSettings": {
+          "singleValue": {
+            "label": "RETURNS",
+            "recordField": "returns",
+            "colorThresholdTarget": "background"
+          },
+          "unitsOverrides": [
+            {
+              "identifier": "returns",
+              "unitCategory": "unspecified",
+              "baseUnit": "count",
+              "displayUnit": null,
+              "decimals": 0,
+              "delimiter": true
+            }
+          ]
+        },
+        "querySettings": {
+          "maxResultRecords": 1000,
+          "defaultScanLimitGbytes": 500,
+          "maxResultMegaBytes": 100,
+          "defaultSamplingRatio": 10,
+          "enableSampling": false
+        }
+      },
+      "35": {
+        "title": "\u2728 Walmart+ Signups",
+        "type": "data",
+        "query": "fetch bizevents\n| filter event.provider == \"walmart.event.provider\"\n| filter event.type == \"loyalty.signup\"\n| filter in(channel, $Channel)\n| summarize signups = count()",
+        "visualization": "singleValue",
+        "visualizationSettings": {
+          "singleValue": {
+            "label": "MEMBERSHIP",
+            "recordField": "signups",
+            "prefixIcon": "StarIcon",
+            "colorThresholdTarget": "background"
+          },
+          "unitsOverrides": [
+            {
+              "identifier": "signups",
+              "unitCategory": "unspecified",
+              "baseUnit": "count",
+              "displayUnit": null,
+              "decimals": 0,
+              "delimiter": true
+            }
+          ]
+        },
+        "querySettings": {
+          "maxResultRecords": 1000,
+          "defaultScanLimitGbytes": 500,
+          "maxResultMegaBytes": 100,
+          "defaultSamplingRatio": 10,
+          "enableSampling": false
+        }
+      },
+      "36": {
+        "title": "\ud83d\uddc2\ufe0f Complaints by Category",
+        "type": "data",
+        "query": "fetch bizevents\n| filter event.provider == \"walmart.event.provider\"\n| filter event.type == \"customer.complaint\"\n| filter in(banner, $Banner)\n| makeTimeseries count = count(), by:{category}, bins:20",
+        "visualization": "barChart",
+        "visualizationSettings": {
+          "chartSettings": {
+            "fieldMapping": {
+              "timestamp": "timeframe",
+              "leftAxisValues": [
+                "count"
+              ],
+              "leftAxisDimensions": [
+                "category"
+              ]
+            },
+            "xAxisLabelVisible": true,
+            "truncationMode": "auto"
+          },
+          "legend": {
+            "ratio": 27
+          }
+        },
+        "querySettings": {
+          "maxResultRecords": 1000,
+          "defaultScanLimitGbytes": 500,
+          "maxResultMegaBytes": 100,
+          "defaultSamplingRatio": 10,
+          "enableSampling": false
+        }
+      },
+      "37": {
+        "title": "\ud83d\udcc8 Returns & Reviews Over Time",
+        "type": "data",
+        "query": "fetch bizevents\n| filter event.provider == \"walmart.event.provider\"\n| filter event.type == \"customer.review\" or event.type == \"return.processed\" or event.type == \"customer.complaint\"\n| filter in(banner, $Banner)\n| makeTimeseries reviews = countIf(event.type == \"customer.review\"), returns = countIf(event.type == \"return.processed\"), complaints = countIf(event.type == \"customer.complaint\"), bins:30",
+        "visualization": "lineChart",
+        "visualizationSettings": {
+          "chartSettings": {
+            "seriesOverrides": [
+              {
+                "seriesId": [
+                  "reviews"
+                ],
+                "override": {
+                  "color": "#FFC220"
+                }
+              },
+              {
+                "seriesId": [
+                  "returns"
+                ],
+                "override": {
+                  "color": "#F47C20"
+                }
+              },
+              {
+                "seriesId": [
+                  "complaints"
+                ],
+                "override": {
+                  "color": "#FF1744"
+                }
+              }
+            ],
+            "fieldMapping": {
+              "leftAxisValues": [
+                "reviews",
+                "returns",
+                "complaints"
+              ],
+              "timestamp": "timeframe"
+            },
+            "gapPolicy": "connect"
+          }
+        },
+        "querySettings": {
+          "maxResultRecords": 1000,
+          "defaultScanLimitGbytes": 500,
+          "maxResultMegaBytes": 100,
+          "defaultSamplingRatio": 10,
+          "enableSampling": false
+        }
+      },
+      "38": {
+        "title": "",
+        "type": "data",
+        "query": "data record(section=\"Pharmacy & Health\")",
+        "visualization": "singleValue",
+        "visualizationSettings": {
+          "singleValue": {
+            "labelMode": "none",
+            "isIconVisible": true,
+            "prefixIcon": "HealthIcon",
+            "colorThresholdTarget": "background"
+          },
+          "autoSelectVisualization": false,
+          "coloring": {
+            "colorRules": [
+              {
+                "value": "x",
+                "comparator": "!=",
+                "field": "section",
+                "colorMode": "custom-color",
+                "customColor": "#2EB04C"
+              }
+            ]
+          }
+        },
+        "querySettings": {
+          "maxResultRecords": 1000,
+          "defaultScanLimitGbytes": 500,
+          "maxResultMegaBytes": 100,
+          "defaultSamplingRatio": 10,
+          "enableSampling": false
+        }
+      },
+      "39": {
+        "title": "\ud83d\udc8a Prescriptions Filled",
+        "type": "data",
+        "query": "fetch bizevents\n| filter event.provider == \"walmart.event.provider\"\n| filter event.type == \"pharmacy.prescription.filled\"\n| filter in(region, $Region)\n| filter in(state, $Store)\n| summarize rx = count()",
+        "visualization": "singleValue",
+        "visualizationSettings": {
+          "singleValue": {
+            "label": "Rx",
+            "recordField": "rx",
+            "colorThresholdTarget": "background"
+          },
+          "unitsOverrides": [
+            {
+              "identifier": "rx",
+              "unitCategory": "unspecified",
+              "baseUnit": "count",
+              "displayUnit": null,
+              "decimals": 0,
+              "delimiter": true
+            }
+          ]
+        },
+        "querySettings": {
+          "maxResultRecords": 1000,
+          "defaultScanLimitGbytes": 500,
+          "maxResultMegaBytes": 100,
+          "defaultSamplingRatio": 10,
+          "enableSampling": false
+        }
+      },
+      "40": {
+        "title": "\ud83e\uddea Generic Fill Rate",
+        "type": "data",
+        "query": "fetch bizevents\n| filter event.provider == \"walmart.event.provider\"\n| filter event.type == \"pharmacy.prescription.filled\"\n| filter in(region, $Region)\n| filter in(state, $Store)\n| summarize generics = countIf(is_generic == true), total = count()\n| fieldsAdd genericRate = (toDouble(generics) / toDouble(total)) * 100",
+        "visualization": "singleValue",
+        "visualizationSettings": {
+          "singleValue": {
+            "label": "GENERIC %",
+            "recordField": "genericRate",
+            "colorThresholdTarget": "background"
+          },
+          "unitsOverrides": [
+            {
+              "identifier": "genericRate",
+              "unitCategory": "percentage",
+              "baseUnit": "percent",
+              "displayUnit": null,
+              "decimals": 1,
+              "suffix": "%",
+              "delimiter": true
+            }
+          ],
+          "coloring": {
+            "colorRules": [
+              {
+                "value": 85,
+                "comparator": "\u2265",
+                "field": "genericPct",
+                "colorMode": "custom-color",
+                "customColor": {
+                  "Default": "var(--dt-colors-charts-status-success-default, #2ab06f)"
+                }
+              },
+              {
+                "value": 75,
+                "comparator": "\u2265",
+                "field": "genericPct",
+                "colorMode": "custom-color",
+                "customColor": {
+                  "Default": "var(--dt-colors-charts-status-warning-default, #f5d30f)"
+                }
+              },
+              {
+                "value": 0,
+                "comparator": "\u2265",
+                "field": "genericPct",
+                "colorMode": "custom-color",
+                "customColor": {
+                  "Default": "var(--dt-colors-charts-status-critical-default, #c62239)"
+                }
+              }
+            ]
+          }
+        },
+        "querySettings": {
+          "maxResultRecords": 1000,
+          "defaultScanLimitGbytes": 500,
+          "maxResultMegaBytes": 100,
+          "defaultSamplingRatio": 10,
+          "enableSampling": false
+        }
+      },
+      "41": {
+        "title": "\ud83d\udc89 Vaccinations Given",
+        "type": "data",
+        "query": "fetch bizevents\n| filter event.provider == \"walmart.event.provider\"\n| filter event.type == \"pharmacy.vaccination\"\n| filter in(region, $Region)\n| filter in(state, $Store)\n| summarize vacc = count()",
+        "visualization": "singleValue",
+        "visualizationSettings": {
+          "singleValue": {
+            "label": "VACCINES",
+            "recordField": "vacc",
+            "colorThresholdTarget": "background"
+          },
+          "unitsOverrides": [
+            {
+              "identifier": "vacc",
+              "unitCategory": "unspecified",
+              "baseUnit": "count",
+              "displayUnit": null,
+              "decimals": 0,
+              "delimiter": true
+            }
+          ]
+        },
+        "querySettings": {
+          "maxResultRecords": 1000,
+          "defaultScanLimitGbytes": 500,
+          "maxResultMegaBytes": 100,
+          "defaultSamplingRatio": 10,
+          "enableSampling": false
+        }
+      },
+      "42": {
+        "title": "\u23f1\ufe0f Avg Rx Wait Time",
+        "type": "data",
+        "query": "fetch bizevents\n| filter event.provider == \"walmart.event.provider\"\n| filter event.type == \"pharmacy.prescription.filled\"\n| filter in(region, $Region)\n| filter in(state, $Store)\n| summarize wait = avg(wait_time_minutes)",
+        "visualization": "singleValue",
+        "visualizationSettings": {
+          "singleValue": {
+            "label": "WAIT",
+            "recordField": "wait",
+            "colorThresholdTarget": "background"
+          },
+          "unitsOverrides": [
+            {
+              "identifier": "wait",
+              "unitCategory": "time",
+              "baseUnit": "minute",
+              "displayUnit": null,
+              "decimals": 1,
+              "suffix": " min",
+              "delimiter": true
+            }
+          ],
+          "coloring": {
+            "colorRules": [
+              {
+                "value": 30,
+                "comparator": ">",
+                "field": "wait",
+                "colorMode": "custom-color",
+                "customColor": {
+                  "Default": "var(--dt-colors-charts-status-critical-default, #c62239)"
+                }
+              },
+              {
+                "value": 20,
+                "comparator": ">",
+                "field": "wait",
+                "colorMode": "custom-color",
+                "customColor": {
+                  "Default": "var(--dt-colors-charts-status-warning-default, #f5d30f)"
+                }
+              },
+              {
+                "value": 20,
+                "comparator": "\u2264",
+                "field": "wait",
+                "colorMode": "custom-color",
+                "customColor": {
+                  "Default": "var(--dt-colors-charts-status-success-default, #2ab06f)"
+                }
+              }
+            ]
+          }
+        },
+        "querySettings": {
+          "maxResultRecords": 1000,
+          "defaultScanLimitGbytes": 500,
+          "maxResultMegaBytes": 100,
+          "defaultSamplingRatio": 10,
+          "enableSampling": false
+        }
+      },
+      "43": {
+        "title": "\ud83d\udc89 Vaccinations by Type",
+        "type": "data",
+        "query": "fetch bizevents\n| filter event.provider == \"walmart.event.provider\"\n| filter event.type == \"pharmacy.vaccination\"\n| filter in(region, $Region)\n| filter in(state, $Store)\n| summarize count = count(), by:{vaccine_type}",
+        "visualization": "honeycomb",
+        "visualizationSettings": {
+          "chartSettings": {
+            "categoryOverrides": {
+              "flu": {
+                "color": "#0071CE"
+              },
+              "covid_booster": {
+                "color": "#F47C20"
+              },
+              "shingles": {
+                "color": "#9B59B6"
+              },
+              "tdap": {
+                "color": "#FFC220"
+              },
+              "pneumonia": {
+                "color": "#2EB04C"
+              },
+              "rsv": {
+                "color": "#4DA6FF"
+              }
+            }
+          },
+          "legend": {
+            "ratio": 27
+          },
+          "honeycomb": {
+            "shape": "hexagon",
+            "displayedValues": "all",
+            "legend": {
+              "hidden": false,
+              "position": "auto"
+            },
+            "dataMappings": {
+              "value": "count"
+            }
+          }
+        },
+        "querySettings": {
+          "maxResultRecords": 1000,
+          "defaultScanLimitGbytes": 500,
+          "maxResultMegaBytes": 100,
+          "defaultSamplingRatio": 10,
+          "enableSampling": false
+        }
+      },
+      "44": {
+        "title": "\ud83d\udcc8 Pharmacy Activity Over Time",
+        "type": "data",
+        "query": "fetch bizevents\n| filter event.provider == \"walmart.event.provider\"\n| filter event.type == \"pharmacy.prescription.filled\" or event.type == \"pharmacy.vaccination\"\n| filter in(region, $Region)\n| filter in(state, $Store)\n| makeTimeseries prescriptions = countIf(event.type == \"pharmacy.prescription.filled\"), vaccinations = countIf(event.type == \"pharmacy.vaccination\"), bins:30",
+        "visualization": "barChart",
+        "visualizationSettings": {
+          "chartSettings": {
+            "seriesOverrides": [
+              {
+                "seriesId": [
+                  "prescriptions"
+                ],
+                "override": {
+                  "color": "#2EB04C"
+                }
+              },
+              {
+                "seriesId": [
+                  "vaccinations"
+                ],
+                "override": {
+                  "color": "#0071CE"
+                }
+              }
+            ],
+            "fieldMapping": {
+              "leftAxisValues": [
+                "prescriptions",
+                "vaccinations"
+              ],
+              "timestamp": "timeframe"
+            },
+            "gapPolicy": "connect"
+          }
+        },
+        "querySettings": {
+          "maxResultRecords": 1000,
+          "defaultScanLimitGbytes": 500,
+          "maxResultMegaBytes": 100,
+          "defaultSamplingRatio": 10,
+          "enableSampling": false
+        }
+      }
+    },
+    "layouts": {
+      "0": {
+        "x": 0,
+        "y": 0,
+        "w": 6,
+        "h": 2
+      },
+      "1": {
+        "x": 6,
+        "y": 0,
+        "w": 18,
+        "h": 2
+      },
+      "2": {
+        "x": 0,
+        "y": 10,
+        "w": 24,
+        "h": 1
+      },
+      "3": {
+        "x": 0,
+        "y": 11,
+        "w": 6,
+        "h": 2
+      },
+      "4": {
+        "x": 6,
+        "y": 11,
+        "w": 6,
+        "h": 2
+      },
+      "5": {
+        "x": 12,
+        "y": 11,
+        "w": 6,
+        "h": 2
+      },
+      "6": {
+        "x": 18,
+        "y": 11,
+        "w": 6,
+        "h": 2
+      },
+      "7": {
+        "x": 0,
+        "y": 13,
+        "w": 12,
+        "h": 4
+      },
+      "8": {
+        "x": 12,
+        "y": 13,
+        "w": 12,
+        "h": 4
+      },
+      "9": {
+        "x": 0,
+        "y": 2,
+        "w": 24,
+        "h": 8
+      },
+      "10": {
+        "x": 0,
+        "y": 17,
+        "w": 24,
+        "h": 1
+      },
+      "11": {
+        "x": 0,
+        "y": 18,
+        "w": 6,
+        "h": 2
+      },
+      "12": {
+        "x": 6,
+        "y": 18,
+        "w": 6,
+        "h": 2
+      },
+      "13": {
+        "x": 12,
+        "y": 18,
+        "w": 6,
+        "h": 2
+      },
+      "14": {
+        "x": 18,
+        "y": 18,
+        "w": 6,
+        "h": 2
+      },
+      "15": {
+        "x": 0,
+        "y": 20,
+        "w": 12,
+        "h": 4
+      },
+      "16": {
+        "x": 12,
+        "y": 20,
+        "w": 12,
+        "h": 4
+      },
+      "17": {
+        "x": 0,
+        "y": 24,
+        "w": 24,
+        "h": 1
+      },
+      "18": {
+        "x": 0,
+        "y": 25,
+        "w": 6,
+        "h": 2
+      },
+      "19": {
+        "x": 6,
+        "y": 25,
+        "w": 6,
+        "h": 2
+      },
+      "20": {
+        "x": 12,
+        "y": 25,
+        "w": 6,
+        "h": 2
+      },
+      "21": {
+        "x": 18,
+        "y": 25,
+        "w": 6,
+        "h": 2
+      },
+      "22": {
+        "x": 0,
+        "y": 27,
+        "w": 12,
+        "h": 4
+      },
+      "23": {
+        "x": 12,
+        "y": 27,
+        "w": 12,
+        "h": 4
+      },
+      "24": {
+        "x": 0,
+        "y": 31,
+        "w": 24,
+        "h": 1
+      },
+      "25": {
+        "x": 0,
+        "y": 32,
+        "w": 6,
+        "h": 2
+      },
+      "26": {
+        "x": 6,
+        "y": 32,
+        "w": 6,
+        "h": 2
+      },
+      "27": {
+        "x": 12,
+        "y": 32,
+        "w": 6,
+        "h": 2
+      },
+      "28": {
+        "x": 18,
+        "y": 32,
+        "w": 6,
+        "h": 2
+      },
+      "29": {
+        "x": 0,
+        "y": 34,
+        "w": 12,
+        "h": 4
+      },
+      "30": {
+        "x": 12,
+        "y": 34,
+        "w": 12,
+        "h": 4
+      },
+      "31": {
+        "x": 0,
+        "y": 38,
+        "w": 24,
+        "h": 1
+      },
+      "32": {
+        "x": 0,
+        "y": 39,
+        "w": 6,
+        "h": 2
+      },
+      "33": {
+        "x": 6,
+        "y": 39,
+        "w": 6,
+        "h": 2
+      },
+      "34": {
+        "x": 12,
+        "y": 39,
+        "w": 6,
+        "h": 2
+      },
+      "35": {
+        "x": 18,
+        "y": 39,
+        "w": 6,
+        "h": 2
+      },
+      "36": {
+        "x": 0,
+        "y": 41,
+        "w": 12,
+        "h": 4
+      },
+      "37": {
+        "x": 12,
+        "y": 41,
+        "w": 12,
+        "h": 4
+      },
+      "38": {
+        "x": 0,
+        "y": 45,
+        "w": 24,
+        "h": 1
+      },
+      "39": {
+        "x": 0,
+        "y": 46,
+        "w": 6,
+        "h": 2
+      },
+      "40": {
+        "x": 6,
+        "y": 46,
+        "w": 6,
+        "h": 2
+      },
+      "41": {
+        "x": 12,
+        "y": 46,
+        "w": 6,
+        "h": 2
+      },
+      "42": {
+        "x": 18,
+        "y": 46,
+        "w": 6,
+        "h": 2
+      },
+      "43": {
+        "x": 0,
+        "y": 48,
+        "w": 12,
+        "h": 4
+      },
+      "44": {
+        "x": 12,
+        "y": 48,
+        "w": 12,
+        "h": 4
+      }
+    },
+    "importedWithCode": false,
+    "settings": {
+      "defaultTimeframe": {
+        "value": {
+          "from": "now()-2h",
+          "to": "now()"
+        },
+        "enabled": true
+      }
+    },
+    "annotations": []
+  }
+}

@@ -54,15 +54,37 @@ cd "Business Event Generator"
 
 ### Make the agent available *anywhere* (recommended)
 
-The repo doubles as an installable **agent skill** (`SKILL.md` at the
-root). Symlink it into your global skills + slash‑commands directories so
-`/generate-kpi-dashboard` and the auto‑invoked skill work from **any** cwd,
-not just inside this repo:
+The repo is also packaged as an installable **agent skill** under
+[skills/dynatrace-kpi-dashboard-generator/](skills/dynatrace-kpi-dashboard-generator/SKILL.md)
+(self‑contained `SKILL.md` + `reference/` assets). It works two ways — pick one:
+
+#### Option A — `npx skills add` (shareable, no clone needed)
+
+Once this repo is pushed to GitHub, anyone can install the skill globally with
+the same command pattern as the dtctl and `dynatrace-for-ai` skills:
 
 ```bash
-# Skill — auto-loaded by Claude Code, Copilot, Cursor, etc.
+npx skills add <your-gh-username>/dynatrace-kpi-dashboard-generator
+```
+
+That copies `skills/dynatrace-kpi-dashboard-generator/` into
+`~/.agents/skills/` (and the equivalent paths for Claude Code, Cursor, etc.)
+so the skill auto‑loads in any cwd. Updates land via `npx skills update`.
+
+The Claude Code slash command and Copilot prompt are repo‑scoped, so for
+those you still want one of the symlink commands below (or copy the prompt
+files into your global agent dirs).
+
+#### Option B — Symlink locally (no publish required)
+
+If you're just running it on your own machines, symlink the bundle and the
+slash commands directly:
+
+```bash
+# Skill bundle — auto-loaded by Claude Code, Copilot, Cursor, etc.
 mkdir -p ~/.agents/skills
-ln -sfn "$PWD" ~/.agents/skills/dynatrace-kpi-dashboard-generator
+ln -sfn "$PWD/skills/dynatrace-kpi-dashboard-generator" \
+  ~/.agents/skills/dynatrace-kpi-dashboard-generator
 
 # Claude Code slash command — /generate-kpi-dashboard <company> from anywhere
 mkdir -p ~/.claude/commands
@@ -77,6 +99,17 @@ ln -sfn "$PWD/.github/prompts/generate-kpi-dashboard.prompt.md" \
 
 Linux Copilot prompt path: `~/.config/Code/User/prompts/`. Windows:
 `%APPDATA%\Code\User\prompts\`.
+
+#### Keeping the skill bundle in sync
+
+`AGENTS.md` and `.example/` at the repo root are the canonical sources. The
+redistributable bundle under `skills/dynatrace-kpi-dashboard-generator/` is
+generated from them. After editing `AGENTS.md` or anything in `.example/`,
+rebuild with:
+
+```bash
+./scripts/build-skill.sh
+```
 
 Generated company folders still go into whatever repo your cwd is in —
 the skill only ships the *recipe*, not the outputs.
@@ -120,12 +153,13 @@ The agent definitions live in:
 
 | File | Used by |
 |------|---------|
-| [SKILL.md](SKILL.md) | Frontmatter‑bearing entry point — auto‑invoked when installed under `~/.agents/skills/` |
-| [AGENTS.md](AGENTS.md) | **Canonical spec** — Claude Code, Cursor, any AGENTS-aware agent |
+| [skills/dynatrace-kpi-dashboard-generator/SKILL.md](skills/dynatrace-kpi-dashboard-generator/SKILL.md) | Redistributable skill bundle — installable via `npx skills add` or symlink into `~/.agents/skills/` |
+| [AGENTS.md](AGENTS.md) | **Canonical spec** — source for the skill bundle; used directly by Claude Code, Cursor, any AGENTS-aware agent in this repo |
 | [.github/copilot-instructions.md](.github/copilot-instructions.md) | GitHub Copilot (auto‑loaded in this repo) |
 | [.github/prompts/generate-kpi-dashboard.prompt.md](.github/prompts/generate-kpi-dashboard.prompt.md) | Copilot Chat reusable prompt |
 | [.claude/commands/generate-kpi-dashboard.md](.claude/commands/generate-kpi-dashboard.md) | Claude Code `/generate-kpi-dashboard` slash command |
 | [.example/](.example/) | Reference dashboard, injector, and workflow JSON the agent mirrors |
+| [scripts/build-skill.sh](scripts/build-skill.sh) | Rebuilds the skill bundle from `AGENTS.md` + `.example/` |
 
 ---
 
@@ -209,9 +243,12 @@ Full spec: [AGENTS.md](AGENTS.md).
 
 ```
 .
-├── SKILL.md                               # skill frontmatter (auto-invoke)
 ├── AGENTS.md                              # canonical agent instructions
 ├── README.md                              # this file
+├── skills/
+│   └── dynatrace-kpi-dashboard-generator/  # redistributable skill bundle (generated)
+│       ├── SKILL.md
+│       └── reference/                      # copy of .example/
 ├── .github/
 │   ├── copilot-instructions.md            # Copilot system prompt
 │   └── prompts/
@@ -221,6 +258,7 @@ Full spec: [AGENTS.md](AGENTS.md).
 │       └── generate-kpi-dashboard.md      # Claude Code slash command
 ├── scripts/
 │   ├── install.sh             # macOS/Linux one-shot installer
+│   ├── build-skill.sh         # regenerate skills/<name>/ from AGENTS.md + .example/
 │   └── check-prereqs.sh
 ├── .example/                              # template assets the agent copies
 │   ├── example_dashboard.json
