@@ -140,8 +140,12 @@ the skill only ships the *recipe*, not the outputs.
 ./scripts/install.sh
 ```
 
-Installs `dtctl`, `jq`, the `dtctl` agent skill, and the `dynatrace-for-ai`
-skills. Then authenticate and verify:
+Installs `dtctl`, `jq`, the `dtctl` agent skill, the `dynatrace-for-ai`
+skills, **and the `dynatrace-kpi-dashboard-generator` skill**. If Claude
+Code (`claude`) is detected on the machine, it also installs the Claude
+plugin so `/generate-kpi-dashboard` works globally without any extra step.
+
+Then authenticate and verify:
 
 ```bash
 dtctl auth login --context my-env --environment "https://<env>.apps.dynatrace.com"
@@ -165,7 +169,16 @@ Follow the upstream install instructions for each tool:
    ```powershell
    npx skills add dynatrace/dynatrace-for-ai
    ```
-4. **`jq`** — https://jqlang.github.io/jq/download/  (or `winget install jqlang.jq`).
+4. **`dynatrace-kpi-dashboard-generator` skill**
+   ```powershell
+   npx skills add SudoSmitty/dynatrace-kpi-dashboard-generator
+   ```
+   And, if you use Claude Code:
+   ```powershell
+   claude plugin marketplace add SudoSmitty/dynatrace-kpi-dashboard-generator
+   claude plugin install dynatrace-kpi-dashboard-generator@dynatrace-kpi-dashboard-generator
+   ```
+5. **`jq`** — https://jqlang.github.io/jq/download/  (or `winget install jqlang.jq`).
 
 Then verify with `bash scripts/check-prereqs.sh` (Git Bash / WSL).
 
