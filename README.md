@@ -52,6 +52,35 @@ git clone <this-repo-url> "Business Event Generator"
 cd "Business Event Generator"
 ```
 
+### Make the agent available *anywhere* (recommended)
+
+The repo doubles as an installable **agent skill** (`SKILL.md` at the
+root). Symlink it into your global skills + slash‑commands directories so
+`/generate-kpi-dashboard` and the auto‑invoked skill work from **any** cwd,
+not just inside this repo:
+
+```bash
+# Skill — auto-loaded by Claude Code, Copilot, Cursor, etc.
+mkdir -p ~/.agents/skills
+ln -sfn "$PWD" ~/.agents/skills/dynatrace-kpi-dashboard-generator
+
+# Claude Code slash command — /generate-kpi-dashboard <company> from anywhere
+mkdir -p ~/.claude/commands
+ln -sfn "$PWD/.claude/commands/generate-kpi-dashboard.md" \
+  ~/.claude/commands/generate-kpi-dashboard.md
+
+# VS Code Copilot prompt — /generate-kpi-dashboard in Copilot Chat from anywhere
+mkdir -p "$HOME/Library/Application Support/Code/User/prompts"
+ln -sfn "$PWD/.github/prompts/generate-kpi-dashboard.prompt.md" \
+  "$HOME/Library/Application Support/Code/User/prompts/generate-kpi-dashboard.prompt.md"
+```
+
+Linux Copilot prompt path: `~/.config/Code/User/prompts/`. Windows:
+`%APPDATA%\Code\User\prompts\`.
+
+Generated company folders still go into whatever repo your cwd is in —
+the skill only ships the *recipe*, not the outputs.
+
 ### macOS / Linux (one command)
 
 ```bash
@@ -91,6 +120,7 @@ The agent definitions live in:
 
 | File | Used by |
 |------|---------|
+| [SKILL.md](SKILL.md) | Frontmatter‑bearing entry point — auto‑invoked when installed under `~/.agents/skills/` |
 | [AGENTS.md](AGENTS.md) | **Canonical spec** — Claude Code, Cursor, any AGENTS-aware agent |
 | [.github/copilot-instructions.md](.github/copilot-instructions.md) | GitHub Copilot (auto‑loaded in this repo) |
 | [.github/prompts/generate-kpi-dashboard.prompt.md](.github/prompts/generate-kpi-dashboard.prompt.md) | Copilot Chat reusable prompt |
@@ -179,6 +209,7 @@ Full spec: [AGENTS.md](AGENTS.md).
 
 ```
 .
+├── SKILL.md                               # skill frontmatter (auto-invoke)
 ├── AGENTS.md                              # canonical agent instructions
 ├── README.md                              # this file
 ├── .github/
