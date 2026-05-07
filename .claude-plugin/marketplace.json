@@ -1,0 +1,14 @@
+{
+  "name": "dynatrace-kpi-dashboard-generator",
+  "owner": {
+    "name": "SudoSmitty",
+    "url": "https://github.com/SudoSmitty"
+  },
+  "plugins": [
+    {
+      "name": "dynatrace-kpi-dashboard-generator",
+      "description": "Generate a Dynatrace Gen 3 KPI dashboard + 30-min BizEvents injector for any company. Includes the /generate-kpi-dashboard slash command.",
+      "source": "./plugins/dynatrace-kpi-dashboard-generator"
+    }
+  ]
+}

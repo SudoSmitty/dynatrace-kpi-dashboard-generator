@@ -48,34 +48,54 @@ This is a plain Git repository — no package install required. Clone it into
 the workspace where you want the company folders to live:
 
 ```bash
-git clone <this-repo-url> "Business Event Generator"
-cd "Business Event Generator"
+git clone https://github.com/SudoSmitty/dynatrace-kpi-dashboard-generator.git
+cd dynatrace-kpi-dashboard-generator
 ```
 
 ### Make the agent available *anywhere* (recommended)
 
-The repo is also packaged as an installable **agent skill** under
-[skills/dynatrace-kpi-dashboard-generator/](skills/dynatrace-kpi-dashboard-generator/SKILL.md)
-(self‑contained `SKILL.md` + `reference/` assets). It works two ways — pick one:
+The repo is packaged three ways. Pick whichever matches your agent and how
+you want updates delivered:
 
-#### Option A — `npx skills add` (shareable, no clone needed)
+#### Option A — Claude Code plugin (skill + slash command, one command)
 
-Once this repo is pushed to GitHub, anyone can install the skill globally with
-the same command pattern as the dtctl and `dynatrace-for-ai` skills:
+If you use Claude Code and want **both** the skill **and** the
+`/generate-kpi-dashboard` slash command installed globally with a single
+command:
 
 ```bash
-npx skills add <your-gh-username>/dynatrace-kpi-dashboard-generator
+claude plugin marketplace add SudoSmitty/dynatrace-kpi-dashboard-generator
+claude plugin install dynatrace-kpi-dashboard-generator@dynatrace-kpi-dashboard-generator
+```
+
+Update later with:
+
+```bash
+claude plugin marketplace update && \
+  claude plugin update dynatrace-kpi-dashboard-generator@dynatrace-kpi-dashboard-generator
+```
+
+This is the closest equivalent to `npx skills add` for Claude Code, but it
+also ships the slash command — no manual symlinks.
+
+#### Option B — `npx skills add` (skill only, any agent)
+
+Works with Claude Code, GitHub Copilot, Cursor, and every other
+[skills.sh](https://agentskills.io)‑compatible agent:
+
+```bash
+npx skills add SudoSmitty/dynatrace-kpi-dashboard-generator
 ```
 
 That copies `skills/dynatrace-kpi-dashboard-generator/` into
-`~/.agents/skills/` (and the equivalent paths for Claude Code, Cursor, etc.)
-so the skill auto‑loads in any cwd. Updates land via `npx skills update`.
+`~/.agents/skills/` (and the equivalent paths for each supported agent) so
+the skill auto‑loads in any cwd. Updates land via `npx skills update`.
 
-The Claude Code slash command and Copilot prompt are repo‑scoped, so for
-those you still want one of the symlink commands below (or copy the prompt
-files into your global agent dirs).
+`npx skills add` does not install slash commands. To get
+`/generate-kpi-dashboard` globally in Claude Code or Copilot Chat without
+the plugin install, use Option C below.
 
-#### Option B — Symlink locally (no publish required)
+#### Option C — Symlink locally (no publish required)
 
 If you're just running it on your own machines, symlink the bundle and the
 slash commands directly:
@@ -153,6 +173,8 @@ The agent definitions live in:
 
 | File | Used by |
 |------|---------|
+| [.claude-plugin/marketplace.json](.claude-plugin/marketplace.json) | Claude Code plugin marketplace manifest — enables `claude plugin install` |
+| [plugins/dynatrace-kpi-dashboard-generator/](plugins/dynatrace-kpi-dashboard-generator/) | Claude Code plugin (skill + slash command, via symlinks) |
 | [skills/dynatrace-kpi-dashboard-generator/SKILL.md](skills/dynatrace-kpi-dashboard-generator/SKILL.md) | Redistributable skill bundle — installable via `npx skills add` or symlink into `~/.agents/skills/` |
 | [AGENTS.md](AGENTS.md) | **Canonical spec** — source for the skill bundle; used directly by Claude Code, Cursor, any AGENTS-aware agent in this repo |
 | [.github/copilot-instructions.md](.github/copilot-instructions.md) | GitHub Copilot (auto‑loaded in this repo) |
@@ -245,6 +267,13 @@ Full spec: [AGENTS.md](AGENTS.md).
 .
 ├── AGENTS.md                              # canonical agent instructions
 ├── README.md                              # this file
+├── .claude-plugin/
+│   └── marketplace.json                   # Claude Code plugin marketplace manifest
+├── plugins/
+│   └── dynatrace-kpi-dashboard-generator/ # Claude Code plugin (skill + command via symlinks)
+│       ├── .claude-plugin/plugin.json
+│       ├── skills/                         # → ../../skills/dynatrace-kpi-dashboard-generator
+│       └── commands/                       # → ../../.claude/commands/generate-kpi-dashboard.md
 ├── skills/
 │   └── dynatrace-kpi-dashboard-generator/  # redistributable skill bundle (generated)
 │       ├── SKILL.md

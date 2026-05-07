@@ -1,0 +1,11 @@
+{
+  "name": "dynatrace-kpi-dashboard-generator",
+  "version": "0.1.0",
+  "description": "Generate a Dynatrace Gen 3 KPI dashboard and 30-minute BizEvents injector for any company. Bundles the skill and the /generate-kpi-dashboard slash command.",
+  "author": {
+    "name": "SudoSmitty",
+    "url": "https://github.com/SudoSmitty"
+  },
+  "homepage": "https://github.com/SudoSmitty/dynatrace-kpi-dashboard-generator",
+  "license": "MIT"
+}
